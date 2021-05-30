@@ -19,8 +19,8 @@ export const useItemDrag = (item) => {
   })
 
   useEffect(() => {
-    preview(getEmptyImage(), { captureDraggingState: true });
-  }, [preview]);
+    preview(getEmptyImage(), { captureDraggingState: true })
+  }, [preview])
 
   return { isDragging, drag }
 }

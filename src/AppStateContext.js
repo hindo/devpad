@@ -1,6 +1,6 @@
 import React, { createContext, useReducer, useContext } from 'react'
 import { nanoid } from 'nanoid'
-import { findItemIndexById, overideItemAtIndex, moveItem } from './utils/arrayUtils'
+import { findItemIndexById, overrideItemAtIndex, moveItem, insertItemAtIndex, removeItemAtIndex } from './utils/arrayUtils'
 
 export const appData = {
   lists: [
@@ -38,6 +38,7 @@ export const useAppState = () => {
 export const ADD_LIST = 'ADD_LIST'
 export const ADD_TASK = 'ADD_TASK'
 export const MOVE_LIST = 'MOVE_LIST'
+export const MOVE_TASK = 'MOVE_TASK'
 export const SET_DRAGGED_ITEM = 'SET_DRAGGED_ITEM'
 
 const appStateReducer = (state, action) => {
@@ -64,7 +65,7 @@ const appStateReducer = (state, action) => {
 
       return {
         ...state,
-        lists: overideItemAtIndex(state.lists, updatedTargetList, targetListIndex)
+        lists: overrideItemAtIndex(state.lists, updatedTargetList, targetListIndex)
       }
     }
     case MOVE_LIST: {
@@ -72,6 +73,53 @@ const appStateReducer = (state, action) => {
       return {
         ...state,
         lists: moveItem(state.lists, dragIndex, hoverIndex)
+      }
+    }
+    case MOVE_TASK: {
+      const {
+        dragIndex,
+        hoverIndex,
+        sourceColumn,
+        targetColumn
+      } = action.payload
+
+      const sourceListIndex = findItemIndexById(
+        state.lists,
+        sourceColumn
+      )
+
+      const targetListIndex = findItemIndexById(
+        state.lists,
+        targetColumn
+      )
+      const sourceList = state.lists[sourceListIndex]
+      const task = sourceList.tasks[dragIndex]
+      const updatedSourceList = {
+        ...sourceList,
+        tasks: removeItemAtIndex(sourceList.tasks, dragIndex)
+      }
+      const stateWithUpdatedSourceList = {
+        ...state,
+        lists: overrideItemAtIndex(
+          state.lists,
+          updatedSourceList,
+          sourceListIndex
+        )
+      }
+
+      const targetList = stateWithUpdatedSourceList.lists[targetListIndex]
+      const updatedTargetList = {
+        ...targetList,
+        tasks: insertItemAtIndex(targetList.tasks, task, hoverIndex)
+      }
+
+      return {
+        ...stateWithUpdatedSourceList,
+        lists: overrideItemAtIndex(
+          stateWithUpdatedSourceList.lists,
+          updatedTargetList,
+          targetListIndex
+        )
       }
     }
     case SET_DRAGGED_ITEM: {

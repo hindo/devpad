@@ -41,6 +41,7 @@
     ]
   },
   "devDependencies": {
+    "eslint-plugin-html": "^6.1.2",
     "standard": "^16.0.3"
   }
 }

@@ -1,27 +1,46 @@
 import React, { useRef } from 'react'
 import { useDrop } from 'react-dnd'
-import { useAppState, ADD_TASK, MOVE_LIST } from '../AppStateContext'
+import { useAppState, ADD_TASK, MOVE_LIST, MOVE_TASK } from '../AppStateContext'
 import { AddNewItem } from './AddNewItem'
 import { Card } from './Card'
 import { useItemDrag } from '../hooks'
 import { ColumnTitle, ColumnContainer } from '../styles'
 
 export const Column = ({ title = 'Default title', index, id }) => {
-  const { state, dispatch } = useAppState()
   const ref = useRef(null)
+  const { state, dispatch } = useAppState()
   const { isDragging, drag } = useItemDrag({ type: 'COLUMN', id, index, title })
 
   const [, drop] = useDrop({
-    accept: 'COLUMN',
+    accept: ['COLUMN', 'CARD'],
     hover (item) {
-      const dragIndex = item.index
-      const hoverIndex = index
+      if (item.type === 'COLUMN') {
+        const dragIndex = item.index
+        const hoverIndex = index
 
-      if (dragIndex === hoverIndex) {
-        return
+        if (dragIndex === hoverIndex) {
+          return
+        }
+        dispatch({ type: MOVE_LIST, payload: { dragIndex, hoverIndex } })
+        item.index = hoverIndex
+      } else {
+        const dragIndex = item.index
+        const hoverIndex = 0
+        const sourceColumn = item.columnId
+        const targetColumn = id
+
+        if (sourceColumn === targetColumn) {
+          return
+        }
+
+        dispatch({
+          type: MOVE_TASK,
+          payload: { dragIndex, hoverIndex, sourceColumn, targetColumn }
+        })
+
+        item.index = hoverIndex
+        item.columnId = targetColumn
       }
-      dispatch({ type: MOVE_LIST, payload: { dragIndex, hoverIndex } })
-      item.index = hoverIndex
     }
   })
 
@@ -30,8 +49,8 @@ export const Column = ({ title = 'Default title', index, id }) => {
   return (
     <ColumnContainer ref={ref} isDragging={isDragging}>
       <ColumnTitle>{title}</ColumnTitle>
-      {state.lists[index].tasks.map(task => (
-        <Card key={task.id}>{task.text}</Card>
+      {state.lists[index].tasks.map((task, i) => (
+        <Card key={task.id} id={task.id} text={task.text} index={i} columnId={id} />
       ))}
       <AddNewItem
         toggleButtonText='+ Add another task'
