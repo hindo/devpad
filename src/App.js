@@ -1,4 +1,4 @@
-import { Column, Card } from './components'
+import { Column, Card, AddNewItem } from './components'
 import { AppContainer } from './styles'
 
 function App() {
@@ -13,6 +13,7 @@ function App() {
       <Column title="Done">
         <Card>Begin to use static typing</Card>
       </Column>
+      <AddNewItem toggleButtonText="+ Add another list" onAdd={console.log} />
     </AppContainer>
   );
 }

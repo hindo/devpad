@@ -1,7 +1,3 @@
-import {Column} from './Column'
-import {Card} from './Card'
-
-export {
-  Column,
-  Card
-}
+export { Column } from './Column'
+export { Card } from './Card'
+export { AddNewItem } from './AddNewItem'
