@@ -2,13 +2,13 @@ import React, { useState } from 'react'
 import { NewItemForm } from './NewItemForm'
 import { AddItemButton } from '../styles'
 
-export const AddNewItem = ({toggleButtonText, dark = false, onAdd = () => {}}) => {
+export const AddNewItem = ({ toggleButtonText, dark = false, handleOnAdd }) => {
   const [showForm, setShowForm] = useState(false)
   if (showForm) {
     return (
       <NewItemForm
-        onAdd={text => {
-          onAdd(text)
+        handleOnAdd={text => {
+          handleOnAdd(text)
           setShowForm(false)
         }}
       />
