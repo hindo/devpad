@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useContext } from 'react'
+import React, { useEffect, createContext, useReducer, useContext } from 'react'
 import { nanoid } from 'nanoid'
 import { findItemIndexById, overrideItemAtIndex, moveItem, insertItemAtIndex, removeItemAtIndex } from './utils/arrayUtils'
 
@@ -35,6 +35,7 @@ export const useAppState = () => {
   return useContext(AppStateContext)
 }
 
+export const SET_STORE = 'SET_STORE'
 export const ADD_LIST = 'ADD_LIST'
 export const ADD_TASK = 'ADD_TASK'
 export const MOVE_LIST = 'MOVE_LIST'
@@ -43,6 +44,9 @@ export const SET_DRAGGED_ITEM = 'SET_DRAGGED_ITEM'
 
 const appStateReducer = (state, action) => {
   switch (action.type) {
+    case SET_STORE: {
+      return { lists: [...action.payload] }
+    }
     case ADD_LIST: {
       return {
         ...state,
@@ -132,7 +136,22 @@ const appStateReducer = (state, action) => {
 }
 
 export const AppStateProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(appStateReducer, appData)
+  const [state, dispatch] = useReducer(appStateReducer, { lists: [] })
+
+  useEffect(() => {
+    const strLists = window.localStorage.getItem('lists') || '[]'
+    dispatch({
+      type: SET_STORE,
+      payload: JSON.parse(strLists)
+    })
+  }, [])
+
+  useEffect(() => {
+    if (state.lists) {
+      window.localStorage.setItem('lists', JSON.stringify(state.lists))
+    }
+  }, [state])
+
   return (
     <AppStateContext.Provider value={{ state, dispatch }}>
       {children}
