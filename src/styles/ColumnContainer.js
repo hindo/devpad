@@ -1,6 +1,7 @@
 import styled from 'styled-components'
+import { DragPreviewContainer } from './DragPreviewContainer'
 
-export const ColumnContainer = styled.div`
+export const ColumnContainer = styled(DragPreviewContainer)`
   background-color: #ebecf0;
   width: 300px;
   min-height: 40px;

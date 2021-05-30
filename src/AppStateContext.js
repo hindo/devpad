@@ -1,6 +1,6 @@
 import React, { createContext, useReducer, useContext } from 'react'
 import { nanoid } from 'nanoid'
-import { findItemIndexById, overideItemAtIndex } from './utils/arrayUtils'
+import { findItemIndexById, overideItemAtIndex, moveItem } from './utils/arrayUtils'
 
 export const appData = {
   lists: [
@@ -25,7 +25,8 @@ export const appData = {
         { id: 'c3', text: 'Begin to use static types' }
       ]
     }
-  ]
+  ],
+  draggedItem: undefined
 }
 
 const AppStateContext = createContext()
@@ -36,6 +37,8 @@ export const useAppState = () => {
 
 export const ADD_LIST = 'ADD_LIST'
 export const ADD_TASK = 'ADD_TASK'
+export const MOVE_LIST = 'MOVE_LIST'
+export const SET_DRAGGED_ITEM = 'SET_DRAGGED_ITEM'
 
 const appStateReducer = (state, action) => {
   switch (action.type) {
@@ -63,6 +66,16 @@ const appStateReducer = (state, action) => {
         ...state,
         lists: overideItemAtIndex(state.lists, updatedTargetList, targetListIndex)
       }
+    }
+    case MOVE_LIST: {
+      const { dragIndex, hoverIndex } = action.payload
+      return {
+        ...state,
+        lists: moveItem(state.lists, dragIndex, hoverIndex)
+      }
+    }
+    case SET_DRAGGED_ITEM: {
+      return { ...state, draggedItem: action.payload }
     }
     default: {
       return state
