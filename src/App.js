@@ -8,6 +8,7 @@ function App () {
   const { state, dispatch } = useAppState()
   return (
     <DndProvider backend={Backend}>
+      <h2>DevPad</h2>
       <AppContainer>
         <CustomDragLayer />
         {state.lists.map((list, i) => (
