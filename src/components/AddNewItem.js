@@ -7,8 +7,13 @@ export const AddNewItem = ({ toggleButtonText, dark = false, handleOnAdd }) => {
   if (showForm) {
     return (
       <NewItemForm
-        handleOnAdd={text => {
-          handleOnAdd(text)
+        handleOnPrimary={text => {
+          if (text.length) {
+            handleOnAdd(text)
+          }
+          setShowForm(false)
+        }}
+        handleOnSecondary={() => {
           setShowForm(false)
         }}
       />

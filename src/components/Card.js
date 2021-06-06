@@ -1,10 +1,13 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { useDrop } from 'react-dnd'
-import { useAppState, MOVE_TASK } from '../AppStateContext'
+import { useAppState, MOVE_TASK, UPDATE_TASK, DELETE_TASK } from '../AppStateContext'
 import { useItemDrag } from '../hooks'
-import { CardContainer } from '../styles'
+import { CardContainer, OptionsWrapper, MarginContainer } from '../styles'
+import { Options } from './Options'
+import { NewItemForm } from './NewItemForm'
 
 export const Card = ({ id, text, index, columnId }) => {
+  const [showForm, setShowForm] = useState(false)
   const ref = useRef(null)
   const { dispatch } = useAppState()
   const { drag } = useItemDrag({ type: 'CARD', id, index, text, columnId })
@@ -32,7 +35,50 @@ export const Card = ({ id, text, index, columnId }) => {
 
   drag(drop(ref))
 
+  const options = [
+    { id: 1, name: 'Rename', action: () => setShowForm(true) },
+    {
+      id: 2,
+      name: 'Delete',
+      action: () =>
+        dispatch({
+          type: DELETE_TASK,
+          payload: { index, columnId }
+        })
+    }
+  ]
+
+  const handleOnUpdate = (text) => {
+    dispatch({
+      type: UPDATE_TASK,
+      payload: { index, columnId, text }
+    })
+  }
+
+  if (showForm) {
+    return (
+      <MarginContainer>
+        <NewItemForm
+          defaultValue={text}
+          primaryButton='Update'
+          handleOnPrimary={text => {
+            handleOnUpdate(text)
+            setShowForm(false)
+          }}
+          handleOnSecondary={() => {
+            setShowForm(false)
+          }}
+        />
+      </MarginContainer>
+    )
+  }
+
   return (
-    <CardContainer ref={ref}>{text}</CardContainer>
+    <OptionsWrapper>
+      <CardContainer ref={ref}>
+        {text}
+        <Options menu={options} />
+      </CardContainer>
+    </OptionsWrapper>
   )
 }

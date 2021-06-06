@@ -2,13 +2,16 @@ import React, { useState } from 'react'
 import { useFocus } from '../hooks'
 import { NewItemFormContainer, NewItemButton, NewItemInput } from '../styles'
 
-export const NewItemForm = ({ handleOnAdd }) => {
-  const [text, setText] = useState('')
+export const NewItemForm = ({ defaultValue = '', primaryButton = 'Create', secondaryButton = 'Cancel', handleOnPrimary, handleOnSecondary }) => {
+  const [text, setText] = useState(defaultValue)
   const inputRef = useFocus()
 
   const handleAddText = (event) => {
     if (event.key === 'Enter') {
-      handleOnAdd(text)
+      handleOnPrimary(text)
+    }
+    if (event.key === 'Escape') {
+      handleOnSecondary()
     }
   }
 
@@ -18,9 +21,12 @@ export const NewItemForm = ({ handleOnAdd }) => {
         ref={inputRef}
         value={text}
         onChange={e => setText(e.target.value)}
-        onKeyPress={handleAddText}
+        onKeyDown={handleAddText}
       />
-      <NewItemButton onClick={() => handleOnAdd(text)}>Create</NewItemButton>
+      <div>
+        <NewItemButton styling='primary' onClick={() => handleOnPrimary(text)}>{primaryButton}</NewItemButton>
+        <NewItemButton onClick={() => handleOnSecondary()}>{secondaryButton}</NewItemButton>
+      </div>
     </NewItemFormContainer>
   )
 }

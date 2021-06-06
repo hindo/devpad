@@ -40,6 +40,8 @@ export const ADD_LIST = 'ADD_LIST'
 export const ADD_TASK = 'ADD_TASK'
 export const MOVE_LIST = 'MOVE_LIST'
 export const MOVE_TASK = 'MOVE_TASK'
+export const UPDATE_TASK = 'UPDATE_TASK'
+export const DELETE_TASK = 'DELETE_TASK'
 export const SET_DRAGGED_ITEM = 'SET_DRAGGED_ITEM'
 
 const appStateReducer = (state, action) => {
@@ -123,6 +125,57 @@ const appStateReducer = (state, action) => {
           stateWithUpdatedSourceList.lists,
           updatedTargetList,
           targetListIndex
+        )
+      }
+    }
+    case UPDATE_TASK: {
+      const {
+        index,
+        columnId,
+        text
+      } = action.payload
+      const sourceListIndex = findItemIndexById(state.lists, columnId)
+      const sourceList = state.lists[sourceListIndex]
+      const sourceTask = findItemIndexById(sourceList.tasks, index)
+      const updatedTask = {
+        ...sourceTask,
+        text
+      }
+      const updatedSourceList = {
+        ...sourceList,
+        tasks: overrideItemAtIndex(sourceList.tasks, updatedTask, index)
+      }
+
+      return {
+        ...state,
+        lists: overrideItemAtIndex(
+          state.lists,
+          updatedSourceList,
+          sourceListIndex
+        )
+      }
+    }
+    case DELETE_TASK: {
+      const {
+        index,
+        columnId
+      } = action.payload
+      const sourceListIndex = findItemIndexById(
+        state.lists,
+        columnId
+      )
+      const sourceList = state.lists[sourceListIndex]
+      const updatedSourceList = {
+        ...sourceList,
+        tasks: removeItemAtIndex(sourceList.tasks, index)
+      }
+
+      return {
+        ...state,
+        lists: overrideItemAtIndex(
+          state.lists,
+          updatedSourceList,
+          sourceListIndex
         )
       }
     }
