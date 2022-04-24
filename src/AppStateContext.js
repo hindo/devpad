@@ -1,35 +1,14 @@
 import React, { useEffect, createContext, useReducer, useContext } from 'react'
 import { nanoid } from 'nanoid'
-import { findItemIndexById, overrideItemAtIndex, moveItem, insertItemAtIndex, removeItemAtIndex } from './utils/arrayUtils'
+import {
+  findItemIndexById,
+  overrideItemAtIndex,
+  moveItem,
+  insertItemAtIndex,
+  removeItemAtIndex,
+} from './utils/arrayUtils'
 
-export const appData = {
-  lists: [
-    {
-      id: '0',
-      title: 'To Do',
-      tasks: [
-        { id: 'c0', text: 'Generate app scaffold' }
-      ]
-    },
-    {
-      id: '1',
-      title: 'In Progress',
-      tasks: [
-        { id: 'c2', text: 'Learn Typescript' }
-      ]
-    },
-    {
-      id: '2',
-      title: 'Done',
-      tasks: [
-        { id: 'c3', text: 'Begin to use static types' }
-      ]
-    }
-  ],
-  draggedItem: undefined
-}
-
-const AppStateContext = createContext()
+const AppStateContext = createContext({})
 
 export const useAppState = () => {
   return useContext(AppStateContext)
@@ -54,55 +33,57 @@ const appStateReducer = (state, action) => {
         ...state,
         lists: [
           ...state.lists,
-          { id: nanoid(), title: action.payload, tasks: [] }
-        ]
+          { id: nanoid(), title: action.payload, tasks: [] },
+        ],
       }
     }
     case ADD_TASK: {
-      const targetListIndex = findItemIndexById(state.lists, action.payload.listId)
+      const { text, accentColor } = action.payload
+      const targetListIndex = findItemIndexById(
+        state.lists,
+        action.payload.listId
+      )
       const targetList = state.lists[targetListIndex]
       const updatedTargetList = {
         ...targetList,
         tasks: [
           ...targetList.tasks,
-          { id: nanoid(), text: action.payload.text }
-        ]
+          {
+            id: nanoid(),
+            text,
+            accentColor,
+          },
+        ],
       }
 
       return {
         ...state,
-        lists: overrideItemAtIndex(state.lists, updatedTargetList, targetListIndex)
+        lists: overrideItemAtIndex(
+          state.lists,
+          updatedTargetList,
+          targetListIndex
+        ),
       }
     }
     case MOVE_LIST: {
       const { dragIndex, hoverIndex } = action.payload
       return {
         ...state,
-        lists: moveItem(state.lists, dragIndex, hoverIndex)
+        lists: moveItem(state.lists, dragIndex, hoverIndex),
       }
     }
     case MOVE_TASK: {
-      const {
-        dragIndex,
-        hoverIndex,
-        sourceColumn,
-        targetColumn
-      } = action.payload
+      const { dragIndex, hoverIndex, sourceColumn, targetColumn } =
+        action.payload
 
-      const sourceListIndex = findItemIndexById(
-        state.lists,
-        sourceColumn
-      )
+      const sourceListIndex = findItemIndexById(state.lists, sourceColumn)
 
-      const targetListIndex = findItemIndexById(
-        state.lists,
-        targetColumn
-      )
+      const targetListIndex = findItemIndexById(state.lists, targetColumn)
       const sourceList = state.lists[sourceListIndex]
       const task = sourceList.tasks[dragIndex]
       const updatedSourceList = {
         ...sourceList,
-        tasks: removeItemAtIndex(sourceList.tasks, dragIndex)
+        tasks: removeItemAtIndex(sourceList.tasks, dragIndex),
       }
       const stateWithUpdatedSourceList = {
         ...state,
@@ -110,13 +91,13 @@ const appStateReducer = (state, action) => {
           state.lists,
           updatedSourceList,
           sourceListIndex
-        )
+        ),
       }
 
       const targetList = stateWithUpdatedSourceList.lists[targetListIndex]
       const updatedTargetList = {
         ...targetList,
-        tasks: insertItemAtIndex(targetList.tasks, task, hoverIndex)
+        tasks: insertItemAtIndex(targetList.tasks, task, hoverIndex),
       }
 
       return {
@@ -125,25 +106,22 @@ const appStateReducer = (state, action) => {
           stateWithUpdatedSourceList.lists,
           updatedTargetList,
           targetListIndex
-        )
+        ),
       }
     }
     case UPDATE_TASK: {
-      const {
-        index,
-        columnId,
-        text
-      } = action.payload
+      const { index, columnId, text, accentColor } = action.payload
       const sourceListIndex = findItemIndexById(state.lists, columnId)
       const sourceList = state.lists[sourceListIndex]
       const sourceTask = findItemIndexById(sourceList.tasks, index)
       const updatedTask = {
         ...sourceTask,
-        text
+        text,
+        accentColor,
       }
       const updatedSourceList = {
         ...sourceList,
-        tasks: overrideItemAtIndex(sourceList.tasks, updatedTask, index)
+        tasks: overrideItemAtIndex(sourceList.tasks, updatedTask, index),
       }
 
       return {
@@ -152,22 +130,16 @@ const appStateReducer = (state, action) => {
           state.lists,
           updatedSourceList,
           sourceListIndex
-        )
+        ),
       }
     }
     case DELETE_TASK: {
-      const {
-        index,
-        columnId
-      } = action.payload
-      const sourceListIndex = findItemIndexById(
-        state.lists,
-        columnId
-      )
+      const { index, columnId } = action.payload
+      const sourceListIndex = findItemIndexById(state.lists, columnId)
       const sourceList = state.lists[sourceListIndex]
       const updatedSourceList = {
         ...sourceList,
-        tasks: removeItemAtIndex(sourceList.tasks, index)
+        tasks: removeItemAtIndex(sourceList.tasks, index),
       }
 
       return {
@@ -176,7 +148,7 @@ const appStateReducer = (state, action) => {
           state.lists,
           updatedSourceList,
           sourceListIndex
-        )
+        ),
       }
     }
     case SET_DRAGGED_ITEM: {
@@ -195,7 +167,7 @@ export const AppStateProvider = ({ children }) => {
     const strLists = window.localStorage.getItem('lists') || '[]'
     dispatch({
       type: SET_STORE,
-      payload: JSON.parse(strLists)
+      payload: JSON.parse(strLists),
     })
   }, [])
 

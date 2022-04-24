@@ -2,21 +2,29 @@ import React, { useState } from 'react'
 import { NewItemForm } from './NewItemForm'
 import { AddItemButton } from '../styles'
 
-export const AddNewItem = ({ toggleButtonText, dark = false, handleOnAdd }) => {
+export const AddNewItem = ({
+  toggleButtonText,
+  dark = false,
+  accentColors = true,
+  handleOnAdd,
+}) => {
   const [showForm, setShowForm] = useState(false)
   if (showForm) {
     return (
-      <NewItemForm
-        handleOnPrimary={text => {
-          if (text.length) {
-            handleOnAdd(text)
-          }
-          setShowForm(false)
-        }}
-        handleOnSecondary={() => {
-          setShowForm(false)
-        }}
-      />
+      <>
+        <NewItemForm
+          accentColors={accentColors}
+          handleOnPrimary={(text, accentColor) => {
+            if (text.length) {
+              handleOnAdd(text, accentColor)
+            }
+            setShowForm(false)
+          }}
+          handleOnSecondary={() => {
+            setShowForm(false)
+          }}
+        />
+      </>
     )
   }
 

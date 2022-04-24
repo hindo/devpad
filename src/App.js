@@ -1,22 +1,35 @@
-import { Column, AddNewItem, CustomDragLayer } from './components'
+import { Column, AddNewItem, CustomDragLayer, Toolbar } from './components'
 import { useAppState, ADD_LIST } from './AppStateContext'
-import { AppContainer } from './styles'
+import { AppContainer, ColumnContainer, ColumnsContainer } from './styles'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend as Backend } from 'react-dnd-html5-backend'
+import { AppConfigProvider } from './contexts/AppConfigContext'
 
-function App () {
+function App() {
   const { state, dispatch } = useAppState()
   return (
-    <DndProvider backend={Backend}>
-      <AppContainer>
-        <CustomDragLayer />
-        {state.lists.map((list, i) => (
-          <Column key={list.id} id={list.id} title={list.title} index={i} />
-        ))}
-
-        <AddNewItem toggleButtonText='+ Add another list' handleOnAdd={text => dispatch({ type: ADD_LIST, payload: text })} />
-      </AppContainer>
-    </DndProvider>
+    <AppConfigProvider>
+      <DndProvider backend={Backend}>
+        <AppContainer>
+          <CustomDragLayer />
+          <Toolbar />
+          <ColumnsContainer>
+            {state.lists.map((list, i) => (
+              <Column key={list.id} id={list.id} title={list.title} index={i} />
+            ))}
+            <ColumnContainer dummy>
+              <AddNewItem
+                toggleButtonText="+ Add another list"
+                handleOnAdd={text =>
+                  dispatch({ type: ADD_LIST, payload: text })
+                }
+                accentColors={false}
+              />
+            </ColumnContainer>
+          </ColumnsContainer>
+        </AppContainer>
+      </DndProvider>
+    </AppConfigProvider>
   )
 }
 

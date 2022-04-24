@@ -1,11 +1,11 @@
 import styled from 'styled-components'
 
 export const AppContainer = styled.div`
-  align-items: flex-start;
   background-color: #3179ba;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   height: 100%;
-  padding: 20px;
+  padding: 0 20px 20px;
   width: 100%;
+  overflow: hidden;
 `

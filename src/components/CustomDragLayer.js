@@ -38,6 +38,7 @@ export const CustomDragLayer = () => {
                 id={item.id}
                 title={item.title}
                 index={item.index}
+                isPreview
               />
               )
             : (

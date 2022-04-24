@@ -1,19 +1,24 @@
 import React, { useRef, useState } from 'react'
 import { useDrop } from 'react-dnd'
-import { useAppState, MOVE_TASK, UPDATE_TASK, DELETE_TASK } from '../AppStateContext'
+import {
+  useAppState,
+  MOVE_TASK,
+  UPDATE_TASK,
+  DELETE_TASK,
+} from '../AppStateContext'
 import { useItemDrag } from '../hooks'
 import { CardContainer, OptionsWrapper, MarginContainer } from '../styles'
 import { Options } from './Options'
 import { NewItemForm } from './NewItemForm'
 
-export const Card = ({ id, text, index, columnId }) => {
+export const Card = ({ id, text, accentColor, index, columnId }) => {
   const [showForm, setShowForm] = useState(false)
   const ref = useRef(null)
   const { dispatch } = useAppState()
   const { drag } = useItemDrag({ type: 'CARD', id, index, text, columnId })
   const [, drop] = useDrop({
     accept: 'CARD',
-    hover (item) {
+    hover(item) {
       if (item.id === id) {
         return
       }
@@ -25,12 +30,12 @@ export const Card = ({ id, text, index, columnId }) => {
 
       dispatch({
         type: MOVE_TASK,
-        payload: { dragIndex, hoverIndex, sourceColumn, targetColumn }
+        payload: { dragIndex, hoverIndex, sourceColumn, targetColumn },
       })
 
       item.index = hoverIndex
       item.columnId = targetColumn
-    }
+    },
   })
 
   drag(drop(ref))
@@ -43,15 +48,15 @@ export const Card = ({ id, text, index, columnId }) => {
       action: () =>
         dispatch({
           type: DELETE_TASK,
-          payload: { index, columnId }
-        })
-    }
+          payload: { index, columnId },
+        }),
+    },
   ]
 
-  const handleOnUpdate = (text) => {
+  const handleOnUpdate = (text, accentColor) => {
     dispatch({
       type: UPDATE_TASK,
-      payload: { index, columnId, text }
+      payload: { index, columnId, text, accentColor },
     })
   }
 
@@ -60,9 +65,11 @@ export const Card = ({ id, text, index, columnId }) => {
       <MarginContainer>
         <NewItemForm
           defaultValue={text}
-          primaryButton='Update'
-          handleOnPrimary={text => {
-            handleOnUpdate(text)
+          defaultColor={accentColor}
+          accentColors
+          primaryButton="Update"
+          handleOnPrimary={(text, accentColor) => {
+            handleOnUpdate(text, accentColor)
             setShowForm(false)
           }}
           handleOnSecondary={() => {
@@ -75,7 +82,7 @@ export const Card = ({ id, text, index, columnId }) => {
 
   return (
     <OptionsWrapper>
-      <CardContainer ref={ref}>
+      <CardContainer accentColor={accentColor} ref={ref}>
         {text}
         <Options menu={options} />
       </CardContainer>
