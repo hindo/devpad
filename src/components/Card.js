@@ -15,7 +15,14 @@ export const Card = ({ id, text, accentColor, index, columnId }) => {
   const [showForm, setShowForm] = useState(false)
   const ref = useRef(null)
   const { dispatch } = useAppState()
-  const { drag } = useItemDrag({ type: 'CARD', id, index, text, columnId })
+  const { drag } = useItemDrag({
+    type: 'CARD',
+    id,
+    index,
+    text,
+    accentColor,
+    columnId,
+  })
   const [, drop] = useDrop({
     accept: 'CARD',
     hover(item) {
@@ -56,7 +63,7 @@ export const Card = ({ id, text, accentColor, index, columnId }) => {
   const handleOnUpdate = (text, accentColor) => {
     dispatch({
       type: UPDATE_TASK,
-      payload: { index, columnId, text, accentColor },
+      payload: { index, id, columnId, text, accentColor },
     })
   }
 

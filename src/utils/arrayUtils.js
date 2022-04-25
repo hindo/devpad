@@ -2,6 +2,10 @@ export const findItemIndexById = (items, id) => {
   return items.findIndex(item => item.id === id)
 }
 
+export const findItemById = (items, id) => {
+  return items.find(item => item.id === id)
+}
+
 export const overrideItemAtIndex = (arr, newItem, targetIndex) => {
   return arr.map((item, index) => {
     if (index !== targetIndex) {

@@ -6,6 +6,7 @@ import {
   moveItem,
   insertItemAtIndex,
   removeItemAtIndex,
+  findItemById,
 } from './utils/arrayUtils'
 
 const AppStateContext = createContext({})
@@ -110,10 +111,10 @@ const appStateReducer = (state, action) => {
       }
     }
     case UPDATE_TASK: {
-      const { index, columnId, text, accentColor } = action.payload
+      const { index, id, columnId, text, accentColor } = action.payload
       const sourceListIndex = findItemIndexById(state.lists, columnId)
       const sourceList = state.lists[sourceListIndex]
-      const sourceTask = findItemIndexById(sourceList.tasks, index)
+      const sourceTask = findItemById(sourceList.tasks, id)
       const updatedTask = {
         ...sourceTask,
         text,

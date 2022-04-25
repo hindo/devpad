@@ -1,9 +1,9 @@
-import { Column, AddNewItem, CustomDragLayer, Toolbar } from './components'
-import { useAppState, ADD_LIST } from './AppStateContext'
+import { AppConfigProvider } from './contexts/AppConfigContext'
 import { AppContainer, ColumnContainer, ColumnsContainer } from './styles'
+import { Column, AddNewItem, CustomDragLayer, Toolbar } from './components'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend as Backend } from 'react-dnd-html5-backend'
-import { AppConfigProvider } from './contexts/AppConfigContext'
+import { useAppState, ADD_LIST } from './AppStateContext'
 
 function App() {
   const { state, dispatch } = useAppState()
