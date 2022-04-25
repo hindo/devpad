@@ -4,6 +4,9 @@ export const ColorIcon = styled.input`
   opacity: 1;
   width: 18px;
   height: 18px;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
 
   &::after {
     content: ' ';
